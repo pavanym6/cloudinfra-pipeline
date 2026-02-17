@@ -52,15 +52,15 @@ jobs:
             - name: Terraform execution
               working-directory: ./eks
               run: |
-                ACTION = "${{ github.event.inputs.Terraform_Action }}"
-                ENV = "${{ github.event.inputs.Environment }}"
+                ACTION="${{ github.event.inputs.Terraform_Action }}"
+                ENV="${{ github.event.inputs.Environment }}"
 
                 echo "Manual Trigger: Executing $ACTION on $ENV"
 
                 if [ "$ACTION" == "plan" ]; then
                     terraform plan -var-file="$ENV.tfvars"
                 elif [ "$ACTION" == "apply" ]; then
-                    terraform apply -var-file="$ENV.tfvars" -auto-approve
+                    terraform apply -var[?12;2$y-file="$ENV.tfvars" -auto-approve
                 elif [ "$ACTION" == "destroy" ]; then
                     terraform destroy -var-file="$ENV.tfvars" -auto-approve
                 fi
