@@ -1,23 +1,23 @@
-name: "CloudInfra Pipeline"
 on:
-    workflow_dispatch:
-        inputs:
-            Environment:
-                default: 'dev'
-                type: choice
-                options:
-                    - dev
-                    - prod
-                    - test
-            Terraform_Action:
-                description: 'Action to perform on EKS'
-                required: true
-                default: 'plan'
-                type: choice
-                options:
-                    - plan
-                    - apply
-                    - destroy
+  workflow_dispatch:
+    inputs:
+      Environment:
+        description: 'Target Environment'
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - test
+      Terraform_Action:
+        description: 'Action to perform on EKS'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
 jobs:
     deploy:
         name: "Terraform execution"
@@ -60,7 +60,7 @@ jobs:
                 if [ "$ACTION" == "plan" ]; then
                     terraform plan -var-file="$ENV.tfvars"
                 elif [ "$ACTION" == "apply" ]; then
-                    terraform apply -var[?12;2$y-file="$ENV.tfvars" -auto-approve
+                    terraform apply -var-file="$ENV.tfvars" -auto-approve
                 elif [ "$ACTION" == "destroy" ]; then
                     terraform destroy -var-file="$ENV.tfvars" -auto-approve
                 fi
