@@ -1,36 +1,73 @@
-name: "EKS Terraform deploy"
+name: "CloudInfra Pipeline"
 on:
-    push:
-        branches:
-            - main
     workflow_dispatch:
+        inputs:
+            Environment:
+                default: 'dev'
+                type: choice
+                options:
+                    - dev
+                    - prod
+                    - test
+            Terraform_Action:
+                description: 'Action to perform on EKS'
+                required: true
+                default: 'plan'
+                type: choice
+                options:
+                    - plan
+                    - apply
+                    - destroy
 jobs:
-    terraform:
-        name: "Terraform Apply"
+    deploy:
+        name: "Terraform execution"
         runs-on: ubuntu-latest
-        env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
         steps:
-            - name: checkout git code
+            - name: Checkout code
               uses: actions/checkout@v4
-            - name: setup terraform
-              uses: hashicorp/setup-terraform@v3
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
               with:
-                  terraform_version: "1.9.3"
-            - name: run terraform bootstrap
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: us-east-1
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+             
+            # STEP ONE: BOOTSTRAP (S3 & DynamoDB)
+            - name: Terraform bootstrap
               working-directory: ./bootstrap
               run: |
-                  terraform init
-                  terraform apply -auto-approve || echo "Bootstarp already exists"
-            # EKS deployment
-            - name: terraform init EKS
+                terraform init
+                terraform apply -auto-approve || echo "Bootstrap already exists..."
+            
+            # STEP TWO: EKS (Init & Validate)
+            - name: Terraform init & validate
               working-directory: ./eks
-              run: terraform init
-            - name: Terraform plan EKS
+              run: |
+                terraform init
+                terraform validate
+
+            # STEP THREE: THE ACTION (Plan, Apply, or Destroy)
+            - name: Terraform execution
               working-directory: ./eks
-              run: terraform plan -var-file="dev.tfvars"
-            - name: terraform apply EKS
-              working-directory: ./eks
-              run: terraform apply -var-file="dev.tfvars" -auto-approve
+              run: |
+                ACTION = "${{ github.event.inputs.Terraform_Action }}"
+                ENV = "${{ github.event.inputs.Environment }}"
+
+                echo "Manual Trigger: Executing $ACTION on $ENV"
+
+                if [ "$ACTION" == "plan" ]; then
+                    terraform plan -var-file="$ENV.tfvars"
+                elif [ "$ACTION" == "apply" ]; then
+                    terraform apply -var-file="$ENV.tfvars" -auto-approve
+                elif [ "$ACTION" == "destroy" ]; then
+                    terraform destroy -var-file="$ENV.tfvars" -auto-approve
+                fi
+
+                
+
+
+
+
+
