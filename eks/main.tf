@@ -19,19 +19,20 @@ module "eks_stack" {
   pri_availability_zone = var.pri_availability_zone
   pri_subnet_name       = var.pri_subnet_name
 
-  # Routing & Gateways (The missing attributes)
+  # Routing & Gateways
   public_rt_name        = var.public_rt_name
   private_rt_name       = var.private_rt_name
   eip-name              = var.eip-name
   ngw_name              = var.ngw_name
   eks_sg                = var.eks_sg
 
-  # IAM & EKS Configuration
-  is_eks_role_enabled           = var.is_eks_role_enabled
+  # IAM & EKS Configuration (Mapping Root Variables to Module Skeleton)
+  is-eks-cluster-enabled        = var.is_eks_role_enabled
+  is_eks_role_enabled           = var.is_eks_role_enabled 
   is_eks_nodegroup_role_enabled = var.is_eks_nodegroup_role_enabled
-  cluster_version               = var.cluster_version
-  endpoint_private_access       = var.endpoint_private_access
-  endpoint_public_access        = var.endpoint_public_access
+  cluster-version               = var.cluster_version
+  endpoint-private-access       = var.endpoint_private_access
+  endpoint-public-access        = var.endpoint_public_access
   addons                        = var.addons
 
   # Node Groups

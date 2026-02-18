@@ -1,31 +1,90 @@
-variable "aws-region" {}
-variable "cluster-name" {}
-variable "vpc-name" {}
-variable "env" {}
-variable "cidr-block" {}
-variable "igw-name" {}
+# --- Project Context ---
+variable "aws-region" {
+  description = "The AWS region to deploy resources"
+}
 
-variable "pub_subnet_count" {}
-variable "pub_cidr_block" { type = list(string) }
-variable "pub_availability_zone" { type = list(string) }
-variable "pub_sub_name" {}
+variable "cluster-name" {
+  description = "Name of the EKS cluster"
+}
 
-variable "pri_subnet_count" {}
-variable "pri_cidr_block" { type = list(string) }
-variable "pri_availability_zone" { type = list(string) }
-variable "pri_subnet_name" {}
+variable "vpc-name" {
+  description = "Name of the VPC"
+}
 
+variable "env" {
+  description = "Deployment environment (e.g., dev, prod)"
+}
+
+# --- Network Configuration ---
+variable "cidr-block" {
+  description = "VPC CIDR block"
+}
+
+variable "igw-name" {
+  description = "Name of the Internet Gateway"
+}
+
+# Public Subnets
+variable "pub_subnet_count" {
+  type = number
+}
+
+variable "pub_cidr_block" {
+  type = list(string)
+}
+
+variable "pub_availability_zone" {
+  type = list(string)
+}
+
+variable "pub_sub_name" {
+  description = "Prefix for public subnet names"
+}
+
+# Private Subnets
+variable "pri_subnet_count" {
+  type = number
+}
+
+variable "pri_cidr_block" {
+  type = list(string)
+}
+
+variable "pri_availability_zone" {
+  type = list(string)
+}
+
+variable "pri_subnet_name" {
+  description = "Prefix for private subnet names"
+}
+
+# Routing & Security
 variable "public_rt_name" {}
 variable "private_rt_name" {}
 variable "eip-name" {}
 variable "ngw_name" {}
 variable "eks_sg" {}
 
-variable "is_eks_role_enabled" { type = bool }
-variable "is_eks_nodegroup_role_enabled" { type = bool }
-variable "cluster_version" {}
-variable "endpoint_private_access" { type = bool }
-variable "endpoint_public_access" { type = bool }
+# --- IAM & EKS Configuration ---
+variable "is_eks_role_enabled" {
+  type = bool
+}
+
+variable "is_eks_nodegroup_role_enabled" {
+  type = bool
+}
+
+variable "cluster_version" {
+  description = "Kubernetes version"
+}
+
+variable "endpoint_private_access" {
+  type = bool
+}
+
+variable "endpoint_public_access" {
+  type = bool
+}
 
 variable "addons" {
   type = list(object({
@@ -34,12 +93,35 @@ variable "addons" {
   }))
 }
 
-variable "ondemand_instance_types" { type = list(string) }
-variable "desired_capacity_on_demand" {}
-variable "min_capacity_on_demand" {}
-variable "max_capacity_on_demand" {}
+# --- Node Group Scaling ---
+variable "ondemand_instance_types" {
+  type = list(string)
+}
 
-variable "spot_instance_types" { type = list(string) }
-variable "desired_capacity_spot" {}
-variable "min_capacity_spot" {}
-variable "max_capacity_spot" {}
+variable "desired_capacity_on_demand" {
+  type = number
+}
+
+variable "min_capacity_on_demand" {
+  type = number
+}
+
+variable "max_capacity_on_demand" {
+  type = number
+}
+
+variable "spot_instance_types" {
+  type = list(string)
+}
+
+variable "desired_capacity_spot" {
+  type = number
+}
+
+variable "min_capacity_spot" {
+  type = number
+}
+
+variable "max_capacity_spot" {
+  type = number
+}

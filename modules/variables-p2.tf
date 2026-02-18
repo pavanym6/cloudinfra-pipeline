@@ -13,7 +13,7 @@ variable "pub_cidr_block" { type = list(string) }
 variable "pub_availability_zone" { type = list(string) }
 variable "pub_sub_name" {}
 
-# Private Subnets (Now using IGW)
+# Private Subnets
 variable "pri_subnet_count" { type = number }
 variable "pri_cidr_block" { type = list(string) }
 variable "pri_availability_zone" { type = list(string) }
@@ -21,22 +21,24 @@ variable "pri_subnet_name" {}
 
 # Routing & Security
 variable "public_rt_name" {}
-variable "eks_sg" {}
-
-
+variable "private_rt_name" {}
 variable "eip-name" {}
 variable "ngw_name" {}
-variable "private_rt_name" {} 
-
+variable "eks_sg" {}
 
 # --- IAM Roles ---
 variable "is_eks_role_enabled" { type = bool }
 variable "is_eks_nodegroup_role_enabled" { type = bool }
 
 # --- EKS Cluster Settings ---
-variable "cluster_version" {}
-variable "endpoint_private_access" { type = bool }
-variable "endpoint_public_access" { type = bool }
+variable "cluster-version" {}
+variable "endpoint-private-access" { type = bool }
+variable "endpoint-public-access" { type = bool }
+variable "is-eks-cluster-enabled" {
+  type        = bool
+  description = "Toggle to enable or disable the EKS cluster creation"
+}
+
 
 variable "addons" {
   type = list(object({
